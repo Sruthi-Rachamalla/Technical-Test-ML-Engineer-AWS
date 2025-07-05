@@ -1,0 +1,61 @@
+Make sure that the proper region is selected.
+
+AWS S3 bucket
+1: S3 bucket create  
+2: imported CSV file
+3: S3 bucket permissions -> CORS policy
+4: CSV file: 02_07_2025_COP=X.csv
+5: Py Files: preprocessing.py, train.py, 
+
+AWS IAM
+1: IAM console -> roles
+cp-role
+2: Create a role (cp-role) that allows S3 to call AWS services on your behalf.
+3: Under "Permissions", add permissions to AdministratorAccess, AmazonAPIGatewayAdministrator, AmazonAPIGatewayInvokeFullAccess, AmazonS3FullAccess
+4: Under "Trust Relationships", update the trusted entities
+cp-sagemaker
+5: Under "Permissions", add permissions to AmazonS3FullAccess, AmazonSageMakerFullAccess
+6: Under "Trust Relationships", update the trusted entities
+
+AWS Quotas
+1: Set a service quota for AWS Sagemaker (ml.m5.xlarge for processing job usage - 100, ml.m5.xlarge for endpoint usage - 10)
+2: 
+3:
+4: 
+5: 
+
+AWS VPC
+1: Set up VPC endpoints for the gateway
+2: Set an Endpoint gateway to S3 
+3: Along with the gateway, set up interfaces to sts, sagemaker.api, ecr.api, logs
+4: 
+5: 
+
+AWS Domain
+1: Create a domain with AWS account and create a project with "All Capabilities"
+2: Save the project ID, Domain ID, Amazon S3 location, and Project role ARN for further reference
+3: Go to current_domain and under project overview, click members, and see if rootuser is visible
+4: Go to AWS Sagemaker -> Domains -> current-domain
+5: Under "User Management", Add the created 2 IAM roles users (cp-role, cp-sagemaker) and check if root and user root are activated.
+6: under "Account associations", check the account ID is associated
+
+AWS Sagemaker
+1: Create a Jupyter notebook 
+2: Upload preprocessing.py and train.py files to the Jupyter Lab
+3: 
+4: 
+5: 
+
+
+
+
+
+
+
+
+
+
+
+
+
+`
