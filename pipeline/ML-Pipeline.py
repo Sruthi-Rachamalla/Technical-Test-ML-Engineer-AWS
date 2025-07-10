@@ -69,7 +69,7 @@ processing_step = ProcessingStep(
 
 # Model Training Stage
 tf_estimator = TensorFlow(
-    entry_point="train-lstm.py",
+    entry_point="train.py",
     role=role,
     instance_type="ml.m5.xlarge",
     instance_count=1,
