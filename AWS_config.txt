@@ -10,7 +10,7 @@ AWS S3 bucket
 AWS IAM
 1: IAM console -> roles
 cp-role, cp-sagemaker
-2: Create a role (cp-role) that allows S3 to call AWS services on your behalf.
+2: Create the roles (cp-role, cp-sagemaker) that allow S3 to call AWS services on your behalf.
 3: Under "Permissions", add permissions to AdministratorAccess, AmazonAPIGatewayAdministrator, AmazonAPIGatewayInvokeFullAccess, AmazonS3FullAccess, AmazonSageMakerFullAccess
 4: Under "Trust Relationships", update the trusted entities
 
