@@ -19,17 +19,13 @@ cp-sagemaker
 
 AWS Quotas
 1: Set a service quota for AWS Sagemaker (ml.m5.xlarge for processing job usage - 100, ml.m5.xlarge for endpoint usage - 10)
-2: 
-3:
-4: 
-5: 
+
 
 AWS VPC
 1: Set up VPC endpoints for the gateway
 2: Set an Endpoint gateway to S3 
 3: Along with the gateway, set up interfaces to sts, sagemaker.api, ecr.api, logs
-4: 
-5: 
+
 
 AWS Domain
 1: Create a domain with AWS account and create a project with "All Capabilities"
@@ -42,9 +38,7 @@ AWS Domain
 AWS Sagemaker
 1: Create a Jupyter notebook 
 2: Upload preprocessing.py and train.py files to the Jupyter Lab
-3: 
-4: 
-5: 
+
 
 
 
