@@ -64,7 +64,7 @@ processing_step = ProcessingStep(
             source="/opt/ml/processing/test"
         )
     ],
-    code="preprocessing-forex.py"
+    code="preprocessing.py"
 )
 
 # Model Training Stage
