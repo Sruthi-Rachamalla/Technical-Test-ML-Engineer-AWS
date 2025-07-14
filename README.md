@@ -31,14 +31,14 @@ This repository deploys an AWS SageMaker Pipeline for predicting currency pair v
 | `cdk.json`                  | Defines CDK command to run the app.                                                            |
 | `forex_pipeline_stack.py`   | CDK stack defining the SageMaker pipeline and its resources.                                   |
 | `pipeline-definition.json`  | JSON definition of the SageMaker pipeline (steps, parameters, and workflow logic).             |
-| `requirements.txt`  		  | Required packages for cdk library.										             		   |
+| `requirements.txt`  	      | Required packages for the cdk library.							       |
 | `preprocessing-forex.py`    | Script executed by SageMaker Processing step to generate volatility datasets.                  |
 | `train-lstm.py`             | LSTM model training script run during the SageMaker Training step.                             |
 | `evaluate-forex.py`         | Model evaluation script run during SageMaker Processing for computing MSE metrics.             |
 | `ml_pipeline.py`            | Main pipeline file  preprocessing, evaluation, condition checking and registering the model.   |
-| `model.tar.gz`         	  | Saved LSTM model file.															               |
-| `aws_config.txt`         	  | AWS configuration required related to S#, SageMaker, Roles, Policies and VPC		           |
-| `pipeline_execution.png`    | Screeensgot of successfull creation of pipeline in AWS CloudFormation using cdk.               |
+| `model.tar.gz`              | Saved LSTM model file.								               |
+| `aws_config.txt`            | AWS configuration required related to S#, SageMaker, Roles, Policies and VPC	               |
+| `pipeline_execution.png`    | Screenshot of successful creation of pipeline in AWS CloudFormation using cdk.               |
 |------------------------------------------------------------------------------------------------------------------------------|
 '''
 ---
