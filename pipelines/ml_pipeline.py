@@ -228,6 +228,24 @@ response = client.list_model_packages(
 
 model_package_arn = response["ModelPackageSummaryList"][0]["ModelPackageArn"]
 
+sm_client = boto3.client("sagemaker", region_name="us-east-2")
+
+pipeline_name = "ForexPredictionPipeline-LSTM"
+
+# Retrieve the pipeline definition
+response = sm_client.describe_pipeline(
+    PipelineName=pipeline_name
+)
+
+pipeline_definition_json = response["PipelineDefinition"]
+
+# Parse JSON
+pipeline_dict = json.loads(pipeline_definition_json)
+
+# Save full pipeline definition
+with open("pipeline-definition.json", "w") as f:
+    json.dump(pipeline_dict, f, indent=2)
+
 
 #Deploying the model
 model = ModelPackage(
