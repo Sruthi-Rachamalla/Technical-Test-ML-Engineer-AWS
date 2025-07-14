@@ -37,7 +37,7 @@ This repository deploys an AWS SageMaker Pipeline for predicting currency pair v
 | `evaluate-forex.py`         | Model evaluation script run during SageMaker Processing for computing MSE metrics.             |
 | `ml_pipeline.py`            | Main pipeline file  preprocessing, evaluation, condition checking and registering the model.   |
 | `model.tar.gz`              | Saved LSTM model file.								               |
-| `aws_config.txt`            | AWS configuration required related to S#, SageMaker, Roles, Policies and VPC	               |
+| `aws_config.txt`            | AWS configuration required related to S3, SageMaker, Roles, Policies and VPC	               |
 | `pipeline_execution.png`    | Screenshot of successful creation of pipeline in AWS CloudFormation using cdk.                 |
 |------------------------------------------------------------------------------------------------------------------------------|
 ```
