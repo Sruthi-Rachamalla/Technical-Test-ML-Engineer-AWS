@@ -5,7 +5,7 @@ This repository deploys an AWS SageMaker Pipeline for predicting currency pair v
 ---
 
 ## 📂 Project Structure
-
+'''
 ├── cdk
 	├── app.py
 	├── cdk.json
@@ -16,14 +16,15 @@ This repository deploys an AWS SageMaker Pipeline for predicting currency pair v
 	├── preprocessing-forex.py
 	├── train-lstm.py
 	├── evaluate-forex.py
+	├── ml_pipeline.py
 ├── artifacts
 	├── model.tar.gz
 	├── aws_config.txt
 	├── pipeline_execution.png
-
-
+'''
 ### Files Explained:
-
+'''
+|------------------------------------------------------------------------------------------------------------------------------|
 | File                        | Description                                                                                    |
 |-----------------------------|------------------------------------------------------------------------------------------------|
 | `app.py`                    | CDK app entrypoint. Instantiates the CDK Stack.                                                |
@@ -34,10 +35,12 @@ This repository deploys an AWS SageMaker Pipeline for predicting currency pair v
 | `preprocessing-forex.py`    | Script executed by SageMaker Processing step to generate volatility datasets.                  |
 | `train-lstm.py`             | LSTM model training script run during the SageMaker Training step.                             |
 | `evaluate-forex.py`         | Model evaluation script run during SageMaker Processing for computing MSE metrics.             |
+| `ml_pipeline.py`            | Main pipeline file  preprocessing, evaluation, condition checking and registering the model.   |
 | `model.tar.gz`         	  | Saved LSTM model file.															               |
 | `aws_config.txt`         	  | AWS configuration required related to S#, SageMaker, Roles, Policies and VPC		           |
 | `pipeline_execution.png`    | Screeensgot of successfull creation of pipeline in AWS CloudFormation using cdk.               |
 |------------------------------------------------------------------------------------------------------------------------------|
+'''
 ---
 
 ## ⚙️ Pipeline Overview
