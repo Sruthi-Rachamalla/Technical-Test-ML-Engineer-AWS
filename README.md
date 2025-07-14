@@ -5,7 +5,7 @@ This repository deploys an AWS SageMaker Pipeline for predicting currency pair v
 ---
 
 ## 📂 Project Structure
-'''
+```
 ├── cdk
 	├── app.py
 	├── cdk.json
@@ -21,9 +21,9 @@ This repository deploys an AWS SageMaker Pipeline for predicting currency pair v
 	├── model.tar.gz
 	├── aws_config.txt
 	├── pipeline_execution.png
-'''
+```
 ### Files Explained:
-'''
+```
 |------------------------------------------------------------------------------------------------------------------------------|
 | File                        | Description                                                                                    |
 |-----------------------------|------------------------------------------------------------------------------------------------|
@@ -38,9 +38,9 @@ This repository deploys an AWS SageMaker Pipeline for predicting currency pair v
 | `ml_pipeline.py`            | Main pipeline file  preprocessing, evaluation, condition checking and registering the model.   |
 | `model.tar.gz`              | Saved LSTM model file.								               |
 | `aws_config.txt`            | AWS configuration required related to S#, SageMaker, Roles, Policies and VPC	               |
-| `pipeline_execution.png`    | Screenshot of successful creation of pipeline in AWS CloudFormation using cdk.               |
+| `pipeline_execution.png`    | Screenshot of successful creation of pipeline in AWS CloudFormation using cdk.                 |
 |------------------------------------------------------------------------------------------------------------------------------|
-'''
+```
 ---
 
 ## ⚙️ Pipeline Overview
