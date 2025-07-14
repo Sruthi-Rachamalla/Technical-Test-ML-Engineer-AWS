@@ -1,0 +1,366 @@
+{
+  "Version": "2020-12-01",
+  "Metadata": {},
+  "Parameters": [
+    {
+      "Name": "InputDataUrl",
+      "Type": "String",
+      "DefaultValue": "s3://currencypair-ml-data/02_07_2025_COP=X.csv"
+    },
+    {
+      "Name": "MSEThreshold",
+      "Type": "Float",
+      "DefaultValue": 0.05
+    }
+  ],
+  "PipelineExperimentConfig": {
+    "ExperimentName": {
+      "Get": "Execution.PipelineName"
+    },
+    "TrialName": {
+      "Get": "Execution.PipelineExecutionId"
+    }
+  },
+  "Steps": [
+    {
+      "Name": "PreprocessForexData",
+      "Type": "Processing",
+      "Arguments": {
+        "ProcessingResources": {
+          "ClusterConfig": {
+            "InstanceType": "ml.m5.xlarge",
+            "InstanceCount": 1,
+            "VolumeSizeInGB": 30
+          }
+        },
+        "AppSpecification": {
+          "ImageUri": "257758044811.dkr.ecr.us-east-2.amazonaws.com/sagemaker-scikit-learn:1.2-1-cpu-py3",
+          "ContainerEntrypoint": [
+            "python3",
+            "/opt/ml/processing/input/code/preprocessing-forex.py"
+          ]
+        },
+        "RoleArn": "arn:aws:iam::637423302756:role/datazone_usr_role_5gs1xk78tlvew9_diae53l2gtnvhl",
+        "ProcessingInputs": [
+          {
+            "InputName": "input-1",
+            "AppManaged": false,
+            "S3Input": {
+              "S3Uri": {
+                "Get": "Parameters.InputDataUrl"
+              },
+              "LocalPath": "/opt/ml/processing/input",
+              "S3DataType": "S3Prefix",
+              "S3InputMode": "File",
+              "S3DataDistributionType": "FullyReplicated",
+              "S3CompressionType": "None"
+            }
+          },
+          {
+            "InputName": "code",
+            "AppManaged": false,
+            "S3Input": {
+              "S3Uri": "s3://sagemaker-us-east-2-637423302756/forex-preprocessing-2025-07-10-21-26-20-968/input/code/preprocessing-forex.py",
+              "LocalPath": "/opt/ml/processing/input/code",
+              "S3DataType": "S3Prefix",
+              "S3InputMode": "File",
+              "S3DataDistributionType": "FullyReplicated",
+              "S3CompressionType": "None"
+            }
+          }
+        ],
+        "ProcessingOutputConfig": {
+          "Outputs": [
+            {
+              "OutputName": "train",
+              "AppManaged": false,
+              "S3Output": {
+                "S3Uri": {
+                  "Std:Join": {
+                    "On": "/",
+                    "Values": [
+                      "s3:/",
+                      "sagemaker-us-east-2-637423302756",
+                      "ForexPredictionPipeline-LSTM",
+                      {
+                        "Get": "Execution.PipelineExecutionId"
+                      },
+                      "PreprocessForexData",
+                      "output",
+                      "train"
+                    ]
+                  }
+                },
+                "LocalPath": "/opt/ml/processing/train",
+                "S3UploadMode": "EndOfJob"
+              }
+            },
+            {
+              "OutputName": "test",
+              "AppManaged": false,
+              "S3Output": {
+                "S3Uri": {
+                  "Std:Join": {
+                    "On": "/",
+                    "Values": [
+                      "s3:/",
+                      "sagemaker-us-east-2-637423302756",
+                      "ForexPredictionPipeline-LSTM",
+                      {
+                        "Get": "Execution.PipelineExecutionId"
+                      },
+                      "PreprocessForexData",
+                      "output",
+                      "test"
+                    ]
+                  }
+                },
+                "LocalPath": "/opt/ml/processing/test",
+                "S3UploadMode": "EndOfJob"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "Name": "TrainForexModel",
+      "Type": "Training",
+      "Arguments": {
+        "AlgorithmSpecification": {
+          "TrainingInputMode": "File",
+          "TrainingImage": "763104351884.dkr.ecr.us-east-2.amazonaws.com/tensorflow-training:2.12-cpu-py310",
+          "EnableSageMakerMetricsTimeSeries": true
+        },
+        "OutputDataConfig": {
+          "S3OutputPath": "s3://currencypair-ml-data/model/"
+        },
+        "StoppingCondition": {
+          "MaxRuntimeInSeconds": 86400
+        },
+        "ResourceConfig": {
+          "VolumeSizeInGB": 30,
+          "InstanceCount": 1,
+          "InstanceType": "ml.m5.xlarge"
+        },
+        "RoleArn": "arn:aws:iam::637423302756:role/datazone_usr_role_5gs1xk78tlvew9_diae53l2gtnvhl",
+        "InputDataConfig": [
+          {
+            "DataSource": {
+              "S3DataSource": {
+                "S3DataType": "S3Prefix",
+                "S3Uri": {
+                  "Get": "Steps.PreprocessForexData.ProcessingOutputConfig.Outputs['train'].S3Output.S3Uri"
+                },
+                "S3DataDistributionType": "FullyReplicated"
+              }
+            },
+            "ChannelName": "train"
+          },
+          {
+            "DataSource": {
+              "S3DataSource": {
+                "S3DataType": "S3Prefix",
+                "S3Uri": {
+                  "Get": "Steps.PreprocessForexData.ProcessingOutputConfig.Outputs['test'].S3Output.S3Uri"
+                },
+                "S3DataDistributionType": "FullyReplicated"
+              }
+            },
+            "ChannelName": "test"
+          }
+        ],
+        "HyperParameters": {
+          "sagemaker_submit_directory": "\"s3://currencypair-ml-data/forex-lstm-2025-07-10-21-26-21-046/source/sourcedir.tar.gz\"",
+          "sagemaker_program": "\"train-lstm.py\"",
+          "sagemaker_container_log_level": "20",
+          "sagemaker_region": "\"us-east-2\"",
+          "model_dir": "\"s3://currencypair-ml-data/model/forex-lstm-2025-07-10-21-26-19-661/model\""
+        },
+        "DebugHookConfig": {
+          "S3OutputPath": "s3://currencypair-ml-data/model/",
+          "CollectionConfigurations": []
+        },
+        "ProfilerConfig": {
+          "S3OutputPath": "s3://currencypair-ml-data/model/",
+          "DisableProfiler": false
+        }
+      }
+    },
+    {
+      "Name": "EvaluateForexModel",
+      "Type": "Processing",
+      "Arguments": {
+        "ProcessingResources": {
+          "ClusterConfig": {
+            "InstanceType": "ml.m5.xlarge",
+            "InstanceCount": 1,
+            "VolumeSizeInGB": 30
+          }
+        },
+        "AppSpecification": {
+          "ImageUri": "763104351884.dkr.ecr.us-east-2.amazonaws.com/tensorflow-training:2.12-cpu-py310",
+          "ContainerEntrypoint": [
+            "python3",
+            "/opt/ml/processing/input/code/evaluate-forex.py"
+          ]
+        },
+        "RoleArn": "arn:aws:iam::637423302756:role/datazone_usr_role_5gs1xk78tlvew9_diae53l2gtnvhl",
+        "ProcessingInputs": [
+          {
+            "InputName": "input-1",
+            "AppManaged": false,
+            "S3Input": {
+              "S3Uri": {
+                "Get": "Steps.TrainForexModel.ModelArtifacts.S3ModelArtifacts"
+              },
+              "LocalPath": "/opt/ml/processing/model",
+              "S3DataType": "S3Prefix",
+              "S3InputMode": "File",
+              "S3DataDistributionType": "FullyReplicated",
+              "S3CompressionType": "None"
+            }
+          },
+          {
+            "InputName": "input-2",
+            "AppManaged": false,
+            "S3Input": {
+              "S3Uri": {
+                "Get": "Steps.PreprocessForexData.ProcessingOutputConfig.Outputs['test'].S3Output.S3Uri"
+              },
+              "LocalPath": "/opt/ml/processing/test",
+              "S3DataType": "S3Prefix",
+              "S3InputMode": "File",
+              "S3DataDistributionType": "FullyReplicated",
+              "S3CompressionType": "None"
+            }
+          },
+          {
+            "InputName": "code",
+            "AppManaged": false,
+            "S3Input": {
+              "S3Uri": "s3://sagemaker-us-east-2-637423302756/forex-eval-2025-07-10-21-26-21-163/input/code/evaluate-forex.py",
+              "LocalPath": "/opt/ml/processing/input/code",
+              "S3DataType": "S3Prefix",
+              "S3InputMode": "File",
+              "S3DataDistributionType": "FullyReplicated",
+              "S3CompressionType": "None"
+            }
+          }
+        ],
+        "ProcessingOutputConfig": {
+          "Outputs": [
+            {
+              "OutputName": "evaluation",
+              "AppManaged": false,
+              "S3Output": {
+                "S3Uri": {
+                  "Std:Join": {
+                    "On": "/",
+                    "Values": [
+                      "s3:/",
+                      "sagemaker-us-east-2-637423302756",
+                      "ForexPredictionPipeline-LSTM",
+                      {
+                        "Get": "Execution.PipelineExecutionId"
+                      },
+                      "EvaluateForexModel",
+                      "output",
+                      "evaluation"
+                    ]
+                  }
+                },
+                "LocalPath": "/opt/ml/processing/evaluation",
+                "S3UploadMode": "EndOfJob"
+              }
+            }
+          ]
+        }
+      },
+      "PropertyFiles": [
+        {
+          "PropertyFileName": "evaluation",
+          "OutputName": "evaluation",
+          "FilePath": "evaluation.json"
+        }
+      ]
+    },
+    {
+      "Name": "CheckForexMSE",
+      "Type": "Condition",
+      "Arguments": {
+        "Conditions": [
+          {
+            "Type": "LessThanOrEqualTo",
+            "LeftValue": {
+              "Std:JsonGet": {
+                "PropertyFile": {
+                  "Get": "Steps.EvaluateForexModel.PropertyFiles.evaluation"
+                },
+                "Path": "regression_metrics.mse.value"
+              }
+            },
+            "RightValue": {
+              "Get": "Parameters.MSEThreshold"
+            }
+          }
+        ],
+        "IfSteps": [
+          {
+            "Name": "RegisterForexModel-RegisterModel",
+            "Type": "RegisterModel",
+            "Arguments": {
+              "ModelPackageGroupName": "ForexPredictionModelPackageGroup",
+              "ModelMetrics": {
+                "ModelQuality": {
+                  "Statistics": {
+                    "ContentType": "application/json",
+                    "S3Uri": {
+                      "Std:Join": {
+                        "On": "/",
+                        "Values": [
+                          {
+                            "Get": "Steps.EvaluateForexModel.ProcessingOutputConfig.Outputs['evaluation'].S3Output.S3Uri"
+                          },
+                          "evaluation.json"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "Bias": {},
+                "Explainability": {}
+              },
+              "InferenceSpecification": {
+                "Containers": [
+                  {
+                    "Image": "763104351884.dkr.ecr.us-east-2.amazonaws.com/tensorflow-training:2.12-cpu-py310",
+                    "Environment": {},
+                    "ModelDataUrl": {
+                      "Get": "Steps.TrainForexModel.ModelArtifacts.S3ModelArtifacts"
+                    }
+                  }
+                ],
+                "SupportedContentTypes": [
+                  "application/json"
+                ],
+                "SupportedResponseMIMETypes": [
+                  "application/json"
+                ],
+                "SupportedRealtimeInferenceInstanceTypes": [
+                  "ml.m5.xlarge"
+                ],
+                "SupportedTransformInstanceTypes": [
+                  "ml.m5.xlarge"
+                ]
+              },
+              "ModelApprovalStatus": "Approved",
+              "SkipModelValidation": "None"
+            }
+          }
+        ],
+        "ElseSteps": []
+      }
+    }
+  ]
+}
